@@ -48,14 +48,14 @@ contract TurtleSwap is ReentrancyGuard {
         require(price > 0, "Invalid price data");
 
         uint256 priceDecimals = priceFeed.decimals();
-        uint256 quoteTokenAmount = transactionAmount * uint256(price) / (10 ** priceDecimals);
+        uint256 quoteAmount = transactionAmount * uint256(price) / (10 ** priceDecimals);
 
-        require(quoteToken.balanceOf(msg.sender) >= quoteTokenAmount, "Insufficient quote token amount");
-        require(quoteToken.allowance(msg.sender, address(this)) >= quoteTokenAmount, "Contract has insufficient transfer permission for the quote token");
+        require(quoteToken.balanceOf(msg.sender) >= quoteAmount, "Insufficient quote token amount");
+        require(quoteToken.allowance(msg.sender, address(this)) >= quoteAmount, "Contract has insufficient transfer permission for the quote token");
 
         transactionToken.transfer(msg.sender, transactionAmount);
-        quoteToken.transferFrom(msg.sender, address(this), quoteTokenAmount);
-        emit Taken(makerAddress, msg.sender, transactionAmount, quoteTokenAmount);
+        quoteToken.transferFrom(msg.sender, makerAddress, quoteAmount);
+        emit Taken(makerAddress, msg.sender, transactionAmount, quoteAmount);
         makerAddress = address(0);
     }
 }
